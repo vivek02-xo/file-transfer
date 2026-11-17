@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import {
   createPeerConnection,
@@ -7,6 +7,12 @@ import {
 import { sendSignal } from "../services/signalingService";
 
 function useSocketConnection(refs, callbacks) {
+  const refsRef = useRef(refs);
+  const callbacksRef = useRef(callbacks);
+
+  // Keep the latest values without reconnecting the socket.
+  refsRef.current = refs;
+  callbacksRef.current = callbacks;
   useEffect(() => {
     const socket = io(process.env.REACT_APP_SERVER_URL);
 
@@ -100,7 +106,7 @@ function useSocketConnection(refs, callbacks) {
       refs.peerRef.current?.close();
       refs.socketRef.current = null;
     };
-  }, []);
+  }, [refs, callbacks]);
 }
 
 export default useSocketConnection;

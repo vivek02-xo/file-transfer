@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import useDeviceState from "./useDeviceState";
 import useConnectionState from "./useConnectionState";
 import useFileTransferState from "./useFileTransferState";
@@ -19,17 +19,28 @@ function useHome() {
   const fileState = useFileTransferState();
 
   // 4. Collect references
-  const refs = {
-    socketRef: deviceState.socketRef,
-    registeredName: deviceState.registeredName,
+  const refs = useMemo(
+    () => ({
+      socketRef: deviceState.socketRef,
+      registeredName: deviceState.registeredName,
 
-    peerRef: connectionState.peerRef,
-    channelRef: connectionState.channelRef,
-    targetRef: connectionState.targetRef,
-    pendingCandidatesRef: connectionState.pendingCandidatesRef,
+      peerRef: connectionState.peerRef,
+      channelRef: connectionState.channelRef,
+      targetRef: connectionState.targetRef,
+      pendingCandidatesRef: connectionState.pendingCandidatesRef,
 
-    incomingTransferRef: fileState.incomingTransferRef,
-  };
+      incomingTransferRef: fileState.incomingTransferRef,
+    }),
+    [
+      deviceState.socketRef,
+      deviceState.registeredName,
+      connectionState.peerRef,
+      connectionState.channelRef,
+      connectionState.targetRef,
+      connectionState.pendingCandidatesRef,
+      fileState.incomingTransferRef,
+    ],
+  );
 
   // 5. Collect callbacks
   const handleReceivedDataCallback = useCallback(
@@ -50,18 +61,29 @@ function useHome() {
     ],
   );
 
-  const callbacks = {
-    setDevices: deviceState.setDevices,
-    setMySocketId: deviceState.setMySocketId,
-    setServerConnected: deviceState.setServerConnected,
+  const callbacks = useMemo(
+    () => ({
+      setDevices: deviceState.setDevices,
+      setMySocketId: deviceState.setMySocketId,
+      setServerConnected: deviceState.setServerConnected,
 
-    setConnectionStatus: connectionState.setConnectionStatus,
-    setChannelOpen: connectionState.setChannelOpen,
+      setConnectionStatus: connectionState.setConnectionStatus,
+      setChannelOpen: connectionState.setChannelOpen,
 
-    setSendProgress: fileState.setSendProgress,
+      setSendProgress: fileState.setSendProgress,
 
-    handleReceivedData: handleReceivedDataCallback,
-  };
+      handleReceivedData: handleReceivedDataCallback,
+    }),
+    [
+      deviceState.setDevices,
+      deviceState.setMySocketId,
+      deviceState.setServerConnected,
+      connectionState.setConnectionStatus,
+      connectionState.setChannelOpen,
+      fileState.setSendProgress,
+      handleReceivedDataCallback,
+    ],
+  );
 
   // 6. Socket connection and signaling
   useSocketConnection(refs, callbacks);
