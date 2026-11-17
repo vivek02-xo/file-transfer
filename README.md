@@ -2,7 +2,7 @@
 # Local File-Transfer
 A peer-peer data sharing web application that allows users to transfer data between different operating systems and devices without uploading data to cloud storage.
 
-[Platform](https://file-sharing02xo.vercel.app/)
+[Website](https://file-sharing02xo.vercel.app/)
 
 
 ## Overview
